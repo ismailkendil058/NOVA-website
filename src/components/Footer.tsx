@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-secondary/10 pt-16 pb-20 px-6 mt-12 border-t border-primary/5">
+        <footer id="footer" className="bg-secondary/10 pt-16 pb-20 px-6 mt-12 border-t border-primary/5">
             <div className="max-w-4xl mx-auto flex flex-col items-center space-y-12 text-center">
 
                 {/* Brand & Info */}
@@ -28,7 +28,7 @@ const Footer = () => {
                                 <MapPin className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <p className="text-sm font-bold uppercase tracking-tight">Ouled Hedadj</p>
+                                <p className="text-sm font-bold uppercase tracking-tight">Ouled Heddaj</p>
                                 <p className="text-xs text-muted-foreground font-medium">Boumerdès, Algeria</p>
                             </div>
                         </div>

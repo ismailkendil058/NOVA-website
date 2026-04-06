@@ -19,8 +19,9 @@ export default function ProductCard({ id, name, price, oldPrice, isPack, image }
           <img
             src={image}
             alt={name}
-            className="w-full h-full object-cover transition-opacity duration-500 opacity-0"
+            className="w-full h-full object-cover transition-opacity duration-500 opacity-0 image-fade-in"
             loading="lazy"
+            decoding="async"
             onLoad={(e) => (e.currentTarget.style.opacity = '1')}
           />
         ) : (

@@ -50,6 +50,24 @@ const Index = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const id = hash.replace('#', '');
+        const el = document.getElementById(id);
+        if (el) {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }, 300);
+        }
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
   const filtered = products.filter(p => {
     if (search && !p.name_fr.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === 'Tous') return true;
@@ -69,7 +87,9 @@ const Index = () => {
       className="mobile-container bg-background"
     >
       <MobileDrawer />
-      <HeroCarousel />
+      <div className="content-auto">
+        <HeroCarousel />
+      </div>
 
       <div id="content" className="relative z-10 bg-background">
         <SearchFilterBar
@@ -79,32 +99,43 @@ const Index = () => {
           onFilterChange={setFilter}
         />
 
-        <PacksSection />
-        <CategoriesCarousel />
+        <div className="content-auto">
+          <div id="packs">
+            <PacksSection />
+          </div>
+        </div>
+
+        <div className="content-auto">
+          <div id="categories">
+            <CategoriesCarousel />
+          </div>
+        </div>
 
         {/* All Products */}
-        <section className="px-4 py-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-black text-foreground tracking-tighter">Nos Produits</h2>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1">Discovery Collection</p>
-          </div>
-          {filtered.length === 0 ? (
-            <p className="text-center text-muted-foreground text-sm py-12">Aucun produit trouvé</p>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {filtered.map(p => (
-                <ProductCard
-                  key={p.id}
-                  id={p.id}
-                  name={p.name_fr}
-                  price={p.price}
-                  oldPrice={p.old_price}
-                  isPack={p.is_pack}
-                  image={p.images?.[0]}
-                />
-              ))}
+        <section className="px-4 py-8 content-auto">
+          <div id="all-products" className="scroll-mt-20">
+            <div className="mb-6">
+              <h2 className="text-2xl font-black text-foreground tracking-tighter">Nos Produits</h2>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1">Discovery Collection</p>
             </div>
-          )}
+            {filtered.length === 0 ? (
+              <p className="text-center text-muted-foreground text-sm py-12">Aucun produit trouvé</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {filtered.map(p => (
+                  <ProductCard
+                    key={p.id}
+                    id={p.id}
+                    name={p.name_fr}
+                    price={p.price}
+                    oldPrice={p.old_price}
+                    isPack={p.is_pack}
+                    image={p.images?.[0]}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       </div>
 

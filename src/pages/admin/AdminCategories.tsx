@@ -12,6 +12,7 @@ export default function AdminCategories() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name_fr: '', name_ar: '', image: null as File | null });
   const [imagePreview, setImagePreview] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -22,6 +23,7 @@ export default function AdminCategories() {
 
   async function handleSubmit() {
     if (!form.name_fr || !form.name_ar) return;
+    setLoading(true);
     let image_url = '';
     if (form.image) {
       try {
@@ -41,12 +43,19 @@ export default function AdminCategories() {
         console.error('Compression error:', error);
       }
     }
-    await supabase.from('categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });
-    setForm({ name_fr: '', name_ar: '', image: null });
-    setImagePreview('');
-    setOpen(false);
-    load();
-    toast({ title: 'Catégorie ajoutée' });
+
+    try {
+      await supabase.from('categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });
+      setForm({ name_fr: '', name_ar: '', image: null });
+      setImagePreview('');
+      setOpen(false);
+      load();
+      toast({ title: 'Catégorie ajoutée' });
+    } catch (error) {
+      toast({ title: 'Erreur', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function deleteCategory(id: string) {
@@ -90,7 +99,13 @@ export default function AdminCategories() {
                   <input type="file" accept="image/*" onChange={e => e.target.files?.[0] && handleImageChange(e.target.files[0])} className="text-xs text-muted-foreground" />
                   {imagePreview && <img src={imagePreview} alt="preview" className="mt-2 w-20 h-20 object-cover rounded border border-border shadow-sm" />}
                 </div>
-                <button onClick={handleSubmit} className="w-full bg-primary text-primary-foreground py-3 text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/20">Enregistrer</button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className={`w-full bg-primary text-primary-foreground py-3 text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/20 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  {loading ? 'Enregistrement...' : 'Enregistrer'}
+                </button>
               </div>
             </DialogContent>
           </Dialog>

@@ -30,6 +30,8 @@ export default function AdminProducts() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => { load(); }, []);
 
@@ -44,6 +46,9 @@ export default function AdminProducts() {
 
   async function handleSubmit() {
     if (!form.name_fr || !form.price) return;
+    setLoading(true);
+    setUploadProgress(0);
+
     const imageUrls: string[] = [];
 
     const compressionOptions = {
@@ -51,6 +56,9 @@ export default function AdminProducts() {
       maxWidthOrHeight: 1920,
       useWebWorker: true,
     };
+
+    const totalFiles = form.images.length;
+    let processedFiles = 0;
 
     for (const file of form.images) {
       try {
@@ -63,8 +71,9 @@ export default function AdminProducts() {
         }
       } catch (error) {
         console.error('Compression error:', error);
-        // Fallback or handle error
       }
+      processedFiles++;
+      setUploadProgress(Math.round((processedFiles / totalFiles) * 100));
     }
 
     const record = {
@@ -74,22 +83,29 @@ export default function AdminProducts() {
       price: parseFloat(form.price),
       old_price: form.old_price ? parseFloat(form.old_price) : null,
       is_pack: form.is_pack,
-      images: imageUrls.length > 0 ? imageUrls : undefined,
+      images: imageUrls.length > 0 ? imageUrls : (editingId ? undefined : []),
       colors: form.hasColors ? form.colors : [],
     };
 
-    if (editingId) {
-      await supabase.from('products').update(record).eq('id', editingId);
-      toast({ title: 'Produit modifié' });
-    } else {
-      await supabase.from('products').insert(record);
-      toast({ title: 'Produit ajouté' });
-    }
+    try {
+      if (editingId) {
+        await supabase.from('products').update(record).eq('id', editingId);
+        toast({ title: 'Produit modifié' });
+      } else {
+        await supabase.from('products').insert(record);
+        toast({ title: 'Produit ajouté' });
+      }
 
-    setForm(emptyForm);
-    setShowForm(false);
-    setEditingId(null);
-    load();
+      setForm(emptyForm);
+      setShowForm(false);
+      setEditingId(null);
+      load();
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Une erreur est survenue lors de l\'enregistrement', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+      setUploadProgress(0);
+    }
   }
 
   function editProduct(p: any) {
@@ -216,8 +232,12 @@ export default function AdminProducts() {
                 )}
               </div>
 
-              <button onClick={handleSubmit} className="w-full bg-primary text-primary-foreground py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all">
-                {editingId ? 'Valider les modifications' : 'Enregistrer le produit'}
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className={`w-full bg-primary text-primary-foreground py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              >
+                {loading ? `Enregistrement... ${uploadProgress > 0 ? `${uploadProgress}%` : ''}` : (editingId ? 'Valider les modifications' : 'Enregistrer le produit')}
               </button>
             </div>
           </div>
