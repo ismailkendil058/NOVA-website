@@ -1,6 +1,7 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BarChart3, Package, ShoppingCart, Grid3X3, Truck, LogOut } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const navItems = [
   { to: '/admin', icon: BarChart3, label: 'Stats' },
@@ -13,37 +14,50 @@ const navItems = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem('nova_admin') !== 'true') {
-      navigate('/admin/login');
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/admin/login');
+      }
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate('/admin/login');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const logout = () => {
-    localStorage.removeItem('nova_admin');
+  const logout = async () => {
+    await supabase.auth.signOut();
     navigate('/admin/login');
   };
 
+  if (loading) return null;
+
   return (
-    <div className="min-h-screen bg-foreground text-background">
-      <header className="border-b border-white/10 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-black tracking-wider">NOVA DECO <span className="text-primary text-xs font-normal ml-1">Admin</span></h1>
-        <button onClick={logout} className="text-background/50 hover:text-primary">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="border-b border-border px-4 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-black tracking-wider text-foreground">NOVA DECO <span className="text-primary text-xs font-normal ml-1">Admin</span></h1>
+        <button onClick={logout} className="text-muted-foreground hover:text-primary transition-colors">
           <LogOut className="w-4 h-4" />
         </button>
       </header>
 
-      <nav className="flex border-b border-white/10 overflow-x-auto hide-scrollbar">
+      <nav className="flex border-b border-border overflow-x-auto hide-scrollbar">
         {navItems.map(item => (
           <Link
             key={item.to}
             to={item.to}
-            className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium shrink-0 border-b-2 transition-colors ${
-              location.pathname === item.to
-                ? 'border-primary text-primary'
-                : 'border-transparent text-background/50 hover:text-background'
-            }`}
+            className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium shrink-0 border-b-2 transition-colors ${location.pathname === item.to
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
           >
             <item.icon className="w-3.5 h-3.5" />
             {item.label}
@@ -51,7 +65,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         ))}
       </nav>
 
-      <main className="p-4">{children}</main>
+      <main className="p-4 bg-zinc-50/50 min-h-[calc(100vh-100px)]">{children}</main>
     </div>
   );
 }

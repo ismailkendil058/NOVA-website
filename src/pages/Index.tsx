@@ -48,18 +48,15 @@ const Index = () => {
     });
   }, []);
 
-  const getCategoryId = (filterName: string) => {
-    const cat = categories.find(c => c.name_fr === categoryFilterMap[filterName]);
-    return cat?.id;
-  };
-
   const filtered = products.filter(p => {
     if (search && !p.name_fr.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === 'Tous') return true;
     if (filter === 'Promotions') return p.old_price !== null;
     if (filter === 'Packs') return p.is_pack;
-    const catId = getCategoryId(filter);
-    return catId ? p.category_id === catId : true;
+
+    // Find the category by name to match the filter choice
+    const selectedCat = categories.find(c => c.name_fr === filter);
+    return selectedCat ? p.category_id === selectedCat.id : true;
   });
 
   return (

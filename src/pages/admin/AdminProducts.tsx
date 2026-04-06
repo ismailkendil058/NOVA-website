@@ -118,64 +118,94 @@ export default function AdminProducts() {
 
     return (
       <AdminLayout>
-        <div className="space-y-4">
-          <button onClick={() => { setShowForm(false); setEditingId(null); setForm(emptyForm); }} className="flex items-center gap-1 text-background/50 text-xs">
+        <div className="space-y-6">
+          <button onClick={() => { setShowForm(false); setEditingId(null); setForm(emptyForm); }} className="flex items-center gap-1 text-muted-foreground text-[10px] font-bold uppercase hover:text-foreground transition-colors">
             <ArrowLeft className="w-3 h-3" /> Retour
           </button>
-          <h2 className="text-sm font-bold text-background">{editingId ? 'Modifier' : 'Ajouter'} un produit</h2>
 
-          <input type="text" placeholder="Nom du produit (FR)" value={form.name_fr} onChange={e => setForm({ ...form, name_fr: e.target.value })} className="w-full px-3 py-2 bg-white/5 text-background text-sm border border-white/10 focus:border-primary focus:outline-none" />
-          <textarea placeholder="Description (FR)" value={form.description_fr} onChange={e => setForm({ ...form, description_fr: e.target.value })} className="w-full px-3 py-2 bg-white/5 text-background text-sm border border-white/10 focus:border-primary focus:outline-none min-h-[80px]" />
+          <div className="bg-white border border-border shadow-sm p-6 space-y-6">
+            <h2 className="text-xl font-black uppercase tracking-tight text-foreground">{editingId ? 'Modifier' : 'Ajouter'} un produit</h2>
 
-          <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })} className="w-full px-3 py-2 bg-white/5 text-background text-sm border border-white/10 focus:border-primary focus:outline-none">
-            <option value="">Catégorie</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name_fr}</option>)}
-          </select>
-
-          <div className="grid grid-cols-2 gap-3">
-            <input type="number" placeholder="Prix (DA)" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className="px-3 py-2 bg-white/5 text-background text-sm border border-white/10 focus:border-primary focus:outline-none" />
-            <div className="relative">
-              <input type="number" placeholder="Ancien prix" value={form.old_price} onChange={e => setForm({ ...form, old_price: e.target.value })} className="w-full px-3 py-2 bg-white/5 text-background text-sm border border-white/10 focus:border-primary focus:outline-none" />
-              {discount > 0 && <span className="absolute right-2 top-1/2 -translate-y-1/2 text-primary text-xs font-bold">-{discount}%</span>}
-            </div>
-          </div>
-
-          <label className="flex items-center gap-2 text-sm text-background">
-            <input type="checkbox" checked={form.is_pack} onChange={e => setForm({ ...form, is_pack: e.target.checked })} className="accent-primary" />
-            Est un Pack?
-          </label>
-
-          <div>
-            <p className="text-xs text-background/50 mb-2">Images</p>
-            <input type="file" accept="image/*" multiple onChange={e => e.target.files && handleImageFiles(e.target.files)} className="text-xs text-background/50" />
-            {form.imagePreviews.length > 0 && (
-              <div className="flex gap-2 mt-2 overflow-x-auto">
-                {form.imagePreviews.map((src, i) => <img key={i} src={src} alt="" className="w-16 h-16 object-cover" />)}
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Désignation (FR)</p>
+                <input type="text" placeholder="Nom du produit" value={form.name_fr} onChange={e => setForm({ ...form, name_fr: e.target.value })} className="w-full px-4 py-3 bg-secondary text-foreground text-sm border border-border focus:border-primary focus:outline-none transition-all" />
               </div>
-            )}
-          </div>
 
-          <label className="flex items-center gap-2 text-sm text-background">
-            <input type="checkbox" checked={form.hasColors} onChange={e => setForm({ ...form, hasColors: e.target.checked })} className="accent-primary" />
-            Couleurs disponibles?
-          </label>
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Description (FR)</p>
+                <textarea placeholder="Détails du produit..." value={form.description_fr} onChange={e => setForm({ ...form, description_fr: e.target.value })} className="w-full px-4 py-3 bg-secondary text-foreground text-sm border border-border focus:border-primary focus:outline-none min-h-[100px] transition-all" />
+              </div>
 
-          {form.hasColors && (
-            <div className="space-y-2">
-              {form.colors.map((c, i) => (
-                <div key={i} className="flex gap-2 items-center">
-                  <input type="color" value={c.hex} onChange={e => { const colors = [...form.colors]; colors[i].hex = e.target.value; setForm({ ...form, colors }); }} className="w-8 h-8 border-0 p-0" />
-                  <input type="text" placeholder="Nom" value={c.name} onChange={e => { const colors = [...form.colors]; colors[i].name = e.target.value; setForm({ ...form, colors }); }} className="flex-1 px-2 py-1 bg-white/5 text-background text-xs border border-white/10" />
-                  <button onClick={() => setForm({ ...form, colors: form.colors.filter((_, j) => j !== i) })} className="text-destructive"><Trash2 className="w-3 h-3" /></button>
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Catégorie</p>
+                <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })} className="w-full px-4 py-3 bg-secondary text-foreground text-sm border border-border focus:border-primary focus:outline-none transition-all">
+                  <option value="">Sélectionner une catégorie</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name_fr}</option>)}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Prix de vente (DA)</p>
+                  <input type="number" placeholder="0.00" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className="w-full px-4 py-3 bg-secondary text-foreground text-sm border border-border focus:border-primary focus:outline-none transition-all" />
                 </div>
-              ))}
-              <button onClick={addColor} className="text-primary text-xs flex items-center gap-1"><Plus className="w-3 h-3" /> Ajouter couleur</button>
-            </div>
-          )}
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Ancien prix (Optionnel)</p>
+                  <div className="relative">
+                    <input type="number" placeholder="0.00" value={form.old_price} onChange={e => setForm({ ...form, old_price: e.target.value })} className="w-full px-4 py-3 bg-secondary text-foreground text-sm border border-border focus:border-primary focus:outline-none transition-all" />
+                    {discount > 0 && <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded">-{discount}%</span>}
+                  </div>
+                </div>
+              </div>
 
-          <button onClick={handleSubmit} className="w-full bg-primary text-primary-foreground py-3 text-sm font-bold uppercase tracking-widest">
-            {editingId ? 'Modifier' : 'Enregistrer'}
-          </button>
+              <div className="flex items-center gap-2 bg-secondary/50 p-3 rounded border border-border/50">
+                <input type="checkbox" id="is_pack" checked={form.is_pack} onChange={e => setForm({ ...form, is_pack: e.target.checked })} className="w-4 h-4 accent-primary" />
+                <label htmlFor="is_pack" className="text-xs font-bold uppercase text-foreground cursor-pointer">Ce produit est un Pack</label>
+              </div>
+
+              <div className="bg-zinc-50 p-4 border border-dashed border-border rounded-lg">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-3">Galerie Images</p>
+                <div className="flex flex-col gap-4">
+                  <input type="file" accept="image/*" multiple onChange={e => e.target.files && handleImageFiles(e.target.files)} className="text-xs text-muted-foreground file:bg-primary file:text-primary-foreground file:border-0 file:px-3 file:py-1 file:mr-3 file:font-bold file:uppercase file:text-[10px] cursor-pointer" />
+                  {form.imagePreviews.length > 0 && (
+                    <div className="flex gap-3 overflow-x-auto pb-2">
+                      {form.imagePreviews.map((src, i) => (
+                        <div key={i} className="relative shrink-0">
+                          <img src={src} alt="" className="w-20 h-20 object-cover rounded-md border border-border shadow-sm" />
+                          <button onClick={() => setForm({ ...form, imagePreviews: form.imagePreviews.filter((_, j) => j !== i) })} className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-md"><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" id="hasColors" checked={form.hasColors} onChange={e => setForm({ ...form, hasColors: e.target.checked })} className="w-4 h-4 accent-primary" />
+                  <label htmlFor="hasColors" className="text-xs font-bold uppercase text-foreground cursor-pointer">Couleurs disponibles?</label>
+                </div>
+
+                {form.hasColors && (
+                  <div className="bg-secondary/30 p-4 rounded-lg border border-border/50 space-y-3">
+                    {form.colors.map((c, i) => (
+                      <div key={i} className="flex gap-3 items-center bg-white p-2 border border-border rounded shadow-sm transition-all">
+                        <input type="color" value={c.hex} onChange={e => { const colors = [...form.colors]; colors[i].hex = e.target.value; setForm({ ...form, colors }); }} className="w-10 h-10 border-0 p-0 cursor-pointer rounded overflow-hidden" />
+                        <input type="text" placeholder="Nom de la couleur (Ex: Rouge)" value={c.name} onChange={e => { const colors = [...form.colors]; colors[i].name = e.target.value; setForm({ ...form, colors }); }} className="flex-1 px-3 py-2 bg-secondary text-foreground text-xs border border-border focus:border-primary focus:outline-none" />
+                        <button onClick={() => setForm({ ...form, colors: form.colors.filter((_, j) => j !== i) })} className="text-destructive p-2 hover:bg-destructive/10 rounded-full transition-colors"><Trash2 className="w-4 h-4" /></button>
+                      </div>
+                    ))}
+                    <button onClick={addColor} className="w-full py-2 border border-dashed border-primary/30 text-primary text-[10px] font-bold uppercase flex items-center justify-center gap-2 hover:bg-primary/5 transition-all"><Plus className="w-4 h-4" /> Ajouter une variante couleur</button>
+                  </div>
+                )}
+              </div>
+
+              <button onClick={handleSubmit} className="w-full bg-primary text-primary-foreground py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all">
+                {editingId ? 'Valider les modifications' : 'Enregistrer le produit'}
+              </button>
+            </div>
+          </div>
         </div>
       </AdminLayout>
     );
@@ -183,41 +213,44 @@ export default function AdminProducts() {
 
   return (
     <AdminLayout>
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-sm font-bold text-background">Produits</h2>
-          <button onClick={() => setShowForm(true)} className="flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1.5 text-xs font-bold">
-            <Plus className="w-3 h-3" /> Ajouter
+      <div className="space-y-6">
+        <div className="flex justify-between items-center bg-white p-4 border border-border shadow-sm">
+          <h2 className="text-sm font-black uppercase tracking-widest text-foreground">Gestion Stock Produits</h2>
+          <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+            <Plus className="w-4 h-4" /> Nouveau Produit
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="bg-white border border-border shadow-sm overflow-hidden">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-background/50">
-                <th className="text-left py-2">Img</th>
-                <th className="text-left py-2">Nom</th>
-                <th className="text-right py-2">Prix</th>
-                <th className="text-right py-2">Actions</th>
+              <tr className="border-b border-border bg-zinc-50 text-muted-foreground uppercase font-bold text-[10px]">
+                <th className="text-left py-4 px-4">Aperçu</th>
+                <th className="text-left py-4 px-4">Désignation</th>
+                <th className="text-right py-4 px-4">Prix Unitaire</th>
+                <th className="text-right py-4 px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.map(p => (
-                <tr key={p.id} className="border-b border-white/5">
-                  <td className="py-2">
-                    {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-10 h-10 object-cover" /> : <div className="w-10 h-10 bg-white/5" />}
+                <tr key={p.id} className="border-b border-border/50 hover:bg-zinc-50/50 transition-colors">
+                  <td className="py-3 px-4">
+                    {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-12 h-12 object-cover rounded-md border border-border shadow-sm" /> : <div className="w-12 h-12 bg-secondary rounded-md" />}
                   </td>
-                  <td className="py-2 text-background">
-                    <p className="font-medium">{p.name_fr}</p>
-                    <div className="flex gap-1 mt-0.5">
-                      {p.is_pack && <span className="text-[9px] bg-white/10 px-1">PACK</span>}
-                      {p.old_price && <span className="text-[9px] text-primary">-{Math.round(((p.old_price - p.price) / p.old_price) * 100)}%</span>}
+                  <td className="py-3 px-4">
+                    <p className="font-black text-foreground text-sm tracking-tight">{p.name_fr}</p>
+                    <div className="flex gap-2 mt-1">
+                      {p.is_pack && <span className="text-[9px] bg-foreground text-background font-black px-1.5 py-0.5 rounded-sm">PACK</span>}
+                      {p.old_price && <span className="text-[9px] bg-primary/10 text-primary font-black px-1.5 py-0.5 rounded-sm">PROMO -{Math.round(((p.old_price - p.price) / p.old_price) * 100)}%</span>}
                     </div>
                   </td>
-                  <td className="py-2 text-right text-primary font-bold">{p.price} DA</td>
-                  <td className="py-2 text-right space-x-2">
-                    <button onClick={() => editProduct(p)} className="text-background/50 hover:text-primary text-[10px]">Edit</button>
-                    <button onClick={() => deleteProduct(p.id)} className="text-destructive"><Trash2 className="w-3 h-3" /></button>
+                  <td className="py-3 px-4 text-right">
+                    <p className="text-lg font-black text-primary">{p.price} <span className="text-[10px] text-muted-foreground">DA</span></p>
+                    {p.old_price && <p className="text-[10px] text-muted-foreground line-through decoration-destructive/50">{p.old_price} DA</p>}
+                  </td>
+                  <td className="py-3 px-4 text-right space-x-2">
+                    <button onClick={() => editProduct(p)} className="bg-secondary text-foreground font-bold px-3 py-1.5 text-[10px] uppercase border border-border hover:bg-zinc-100 transition-all">Modifier</button>
+                    <button onClick={() => deleteProduct(p.id)} className="text-destructive p-2 hover:bg-destructive/10 rounded-full transition-all inline-flex items-center"><Trash2 className="w-4 h-4" /></button>
                   </td>
                 </tr>
               ))}

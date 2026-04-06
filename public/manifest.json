@@ -1,0 +1,23 @@
+{
+    "name": "NOVA",
+    "short_name": "NOVA",
+    "start_url": "/admin",
+    "scope": "/admin",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#FFFFFF",
+    "description": "NOVA Admin",
+    "icons": [
+        {
+            "src": "/pwa-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/pwa-icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}

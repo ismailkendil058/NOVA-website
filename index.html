@@ -1,27 +1,54 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-<title>NOVA deco</title>
-<meta name="description" content="NOVA deco" />
-    <meta name="author" content="Lovable" />
 
-    <!-- TODO: Update og:title to match your application name -->
-<meta property="og:title" content="NOVA deco" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- TODO: Set the document title to the name of your application -->
+  <title>NOVA deco</title>
+  <meta name="description" content="NOVA deco" />
+  <meta name="author" content="Lovable" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    <link rel="icon" type="image/png" href="/nova.png">
-  </head>
+  <!-- TODO: Update og:title to match your application name -->
+  <meta property="og:title" content="NOVA deco" />
+  <meta property="og:description" content="Lovable Generated Project" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Lovable" />
+  <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+  <link rel="icon" type="image/png" href="/nova.png">
+
+  <script>
+    // Only include PWA manifest and iOS meta tags for administration routes
+    if (window.location.pathname.startsWith('/admin')) {
+      const createMeta = (name, content) => {
+        let meta = document.createElement('meta');
+        meta.name = name;
+        meta.content = content;
+        document.head.appendChild(meta);
+      };
+      const createLink = (rel, href) => {
+        let link = document.createElement('link');
+        link.rel = rel;
+        link.href = href;
+        document.head.appendChild(link);
+      };
+
+      createLink('manifest', '/manifest.json');
+      createLink('apple-touch-icon', '/pwa-icon.png');
+      createMeta('apple-mobile-web-app-capable', 'yes');
+      createMeta('apple-mobile-web-app-status-bar-style', 'default');
+      createMeta('apple-mobile-web-app-title', 'NOVA');
+      createMeta('theme-color', '#FFFFFF');
+    }
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

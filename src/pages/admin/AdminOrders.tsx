@@ -57,52 +57,52 @@ export default function AdminOrders() {
     <AdminLayout>
       <div className="space-y-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-background/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
           <input
             type="text"
             placeholder="Rechercher par nom ou téléphone..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white/5 text-background text-sm border border-white/10 focus:border-primary focus:outline-none"
+            className="w-full pl-10 pr-4 py-2.5 bg-white text-foreground text-sm border border-border focus:border-primary focus:outline-none shadow-sm"
           />
         </div>
 
         <div className="flex gap-2 overflow-x-auto hide-scrollbar">
-          <button onClick={() => setFilterStatus('')} className={`shrink-0 px-3 py-1 text-xs border ${!filterStatus ? 'border-primary text-primary' : 'border-white/10 text-background/50'}`}>Tous</button>
+          <button onClick={() => setFilterStatus('')} className={`shrink-0 px-3 py-1 text-[10px] font-bold uppercase border transition-all ${!filterStatus ? 'bg-primary border-primary text-primary-foreground' : 'bg-white border-border text-muted-foreground'}`}>Tous</button>
           {statuses.map(s => (
-            <button key={s} onClick={() => setFilterStatus(s)} className={`shrink-0 px-3 py-1 text-xs border ${filterStatus === s ? 'border-primary text-primary' : 'border-white/10 text-background/50'}`}>{statusLabels[s]}</button>
+            <button key={s} onClick={() => setFilterStatus(s)} className={`shrink-0 px-3 py-1 text-[10px] font-bold uppercase border transition-all ${filterStatus === s ? 'bg-primary border-primary text-primary-foreground' : 'bg-white border-border text-muted-foreground'}`}>{statusLabels[s]}</button>
           ))}
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto bg-white border border-border shadow-sm">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-background/50">
-                <th className="text-left py-2 px-2">Client</th>
-                <th className="text-left py-2 px-2">Wilaya</th>
-                <th className="text-left py-2 px-2">Statut</th>
-                <th className="text-right py-2 px-2">Total</th>
+              <tr className="border-b border-border bg-zinc-50 text-muted-foreground">
+                <th className="text-left py-3 px-3 uppercase tracking-wider font-bold text-[10px]">Client</th>
+                <th className="text-left py-3 px-3 uppercase tracking-wider font-bold text-[10px]">Wilaya</th>
+                <th className="text-left py-3 px-3 uppercase tracking-wider font-bold text-[10px]">Statut</th>
+                <th className="text-right py-3 px-3 uppercase tracking-wider font-bold text-[10px]">Total</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(o => (
-                <tr key={o.id} onClick={() => openOrder(o)} className="border-b border-white/5 cursor-pointer hover:bg-white/5">
-                  <td className="py-2 px-2">
-                    <p className="font-medium text-background">{o.client_name}</p>
-                    <p className="text-background/40">{o.phone}</p>
+                <tr key={o.id} onClick={() => openOrder(o)} className="border-b border-border/50 cursor-pointer hover:bg-zinc-50/80 transition-colors">
+                  <td className="py-3 px-3">
+                    <p className="font-bold text-foreground">{o.client_name}</p>
+                    <p className="text-muted-foreground text-[10px]">{o.phone}</p>
                   </td>
-                  <td className="py-2 px-2 text-background/70">{o.wilaya}</td>
-                  <td className="py-2 px-2">
+                  <td className="py-3 px-3 text-muted-foreground">{o.wilaya}</td>
+                  <td className="py-3 px-3">
                     <select
                       value={o.status}
                       onChange={e => { e.stopPropagation(); updateStatus(o.id, e.target.value); }}
                       onClick={e => e.stopPropagation()}
-                      className="bg-white/10 text-background text-xs border border-white/10 px-1 py-0.5"
+                      className="bg-secondary text-foreground text-[10px] font-bold uppercase border border-border px-2 py-1 rounded"
                     >
                       {statuses.map(s => <option key={s} value={s}>{statusLabels[s]}</option>)}
                     </select>
                   </td>
-                  <td className="py-2 px-2 text-right font-bold text-primary">{o.total} DA</td>
+                  <td className="py-3 px-3 text-right font-black text-primary">{o.total} DA</td>
                 </tr>
               ))}
             </tbody>
@@ -111,37 +111,48 @@ export default function AdminOrders() {
       </div>
 
       <Sheet open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <SheetContent className="bg-foreground border-white/10 text-background">
+        <SheetContent className="bg-white border-l border-border text-foreground">
           <SheetHeader>
-            <SheetTitle className="text-background">Commande</SheetTitle>
+            <SheetTitle className="text-foreground font-black uppercase tracking-tight">Détails Commande</SheetTitle>
           </SheetHeader>
           {selectedOrder && (
-            <div className="mt-4 space-y-4 text-sm">
-              <div>
-                <p className="text-background/50 text-xs">Client</p>
-                <p className="font-medium">{selectedOrder.client_name}</p>
-                <p className="text-background/60">{selectedOrder.phone}</p>
+            <div className="mt-6 space-y-6 text-sm">
+              <div className="bg-secondary/50 p-4 rounded-lg">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Informations Client</p>
+                <p className="font-black text-lg">{selectedOrder.client_name}</p>
+                <p className="text-primary font-bold">{selectedOrder.phone}</p>
+              </div>
+              <div className="px-1">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-2">Livraison</p>
+                <p className="font-medium">{selectedOrder.wilaya} — <span className="uppercase text-primary">{selectedOrder.delivery_type}</span></p>
+                {selectedOrder.address && <p className="text-muted-foreground mt-1 bg-white border border-border p-3 rounded">{selectedOrder.address}</p>}
               </div>
               <div>
-                <p className="text-background/50 text-xs">Livraison</p>
-                <p>{selectedOrder.wilaya} — {selectedOrder.delivery_type}</p>
-                {selectedOrder.address && <p className="text-background/60">{selectedOrder.address}</p>}
+                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-3">Articles commandés</p>
+                <div className="space-y-2">
+                  {orderItems.map(item => (
+                    <div key={item.id} className="flex justify-between py-2 border-b border-border/50">
+                      <div>
+                        <span className="font-bold">{item.product_name}</span>
+                        <span className="text-muted-foreground ml-2 text-xs">× {item.quantity}</span>
+                        {item.color && (
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <span className="text-[10px] text-muted-foreground">Couleur:</span>
+                            <span className="text-[10px] font-bold">{item.color}</span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-black text-primary">{item.price * item.quantity} DA</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div>
-                <p className="text-background/50 text-xs mb-2">Produits</p>
-                {orderItems.map(item => (
-                  <div key={item.id} className="flex justify-between py-1 border-b border-white/5">
-                    <span>{item.product_name} × {item.quantity} {item.color ? `(${item.color})` : ''}</span>
-                    <span className="font-bold">{item.price * item.quantity} DA</span>
-                  </div>
-                ))}
+              <div className="flex justify-between items-center bg-primary/5 p-4 rounded-lg border border-primary/10">
+                <span className="font-bold uppercase text-[10px]">Total à payer</span>
+                <span className="text-primary font-black text-xl">{selectedOrder.total} DA</span>
               </div>
-              <div className="flex justify-between font-bold text-lg">
-                <span>Total</span>
-                <span className="text-primary">{selectedOrder.total} DA</span>
-              </div>
-              <button onClick={() => deleteOrder(selectedOrder.id)} className="flex items-center gap-2 text-destructive text-xs mt-4">
-                <Trash2 className="w-3 h-3" /> Supprimer la commande
+              <button onClick={() => deleteOrder(selectedOrder.id)} className="w-full flex items-center justify-center gap-2 text-destructive font-bold text-xs py-3 border border-destructive/20 hover:bg-destructive/5 transition-colors mt-8">
+                <Trash2 className="w-4 h-4" /> Supprimer la commande
               </button>
             </div>
           )}

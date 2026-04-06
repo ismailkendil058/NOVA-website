@@ -62,15 +62,15 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-3">
           {statCards.map(s => (
-            <div key={s.label} className="border border-white/10 p-4">
-              <p className="text-xs text-background/50">{s.label}</p>
+            <div key={s.label} className="bg-white border border-border p-4 shadow-sm">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground">{s.label}</p>
               <p className="text-xl font-black text-primary mt-1">{s.value}</p>
             </div>
           ))}
         </div>
 
-        <div className="border border-white/10 p-4">
-          <p className="text-xs text-background/50 mb-3">Commandes / 7 jours</p>
+        <div className="bg-white border border-border p-4 shadow-sm">
+          <p className="text-[10px] uppercase font-bold text-muted-foreground mb-3">Commandes / 7 jours</p>
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={dailyOrders}>
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#888' }} />
@@ -81,22 +81,22 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="border border-white/10 p-4">
-            <p className="text-xs text-background/50 mb-2">Par wilaya (top 5)</p>
+          <div className="bg-white border border-border p-4 shadow-sm">
+            <p className="text-[10px] uppercase font-bold text-muted-foreground mb-2">Par wilaya (top 5)</p>
             <ResponsiveContainer width="100%" height={120}>
               <PieChart>
-                <Pie data={wilayaData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={45} label={({ name }) => name}>
+                <Pie data={wilayaData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={45} label={({ name }) => <text fontSize={10} fill="#666">{name}</text>}>
                   {wilayaData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="border border-white/10 p-4">
-            <p className="text-xs text-background/50 mb-2">Par livraison</p>
+          <div className="bg-white border border-border p-4 shadow-sm">
+            <p className="text-[10px] uppercase font-bold text-muted-foreground mb-2">Par livraison</p>
             <ResponsiveContainer width="100%" height={120}>
               <PieChart>
-                <Pie data={deliveryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={45} label={({ name }) => name}>
+                <Pie data={deliveryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={45} label={({ name }) => <text fontSize={10} fill="#666">{name}</text>}>
                   {deliveryData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip />
