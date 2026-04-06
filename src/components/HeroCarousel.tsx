@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const slides = [
-  { bg: 'linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 20%))' },
-  { bg: 'linear-gradient(135deg, hsl(0 0% 15%), hsl(0 0% 5%))' },
-  { bg: 'linear-gradient(135deg, hsl(150 30% 10%), hsl(0 0% 8%))' },
+  { img: '/hero1.png' },
+  { img: '/hero2.png' },
+  { img: '/hero3.png' },
 ];
 
 export default function HeroCarousel() {
@@ -25,9 +25,11 @@ export default function HeroCarousel() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
-          className="absolute inset-0"
-          style={{ background: slides[current].bg }}
-        />
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          style={{ backgroundImage: `url(${slides[current].img})` }}
+        >
+          <div className="absolute inset-0 bg-black/40" />
+        </motion.div>
       </AnimatePresence>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
@@ -38,8 +40,8 @@ export default function HeroCarousel() {
         >
           NOVA DECO
         </motion.h1>
-        <p className="text-white/70 text-lg mb-8 font-light" dir="rtl">
-          ديكور راقٍ لمنزلك
+        <p className="text-white/70 text-lg mb-8 font-light uppercase tracking-widest">
+          Premium Home Decoration
         </p>
         <a
           href="#content"

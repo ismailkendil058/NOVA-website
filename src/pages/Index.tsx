@@ -1,4 +1,5 @@
 import HeroCarousel from '@/components/HeroCarousel';
+import Footer from '@/components/Footer';
 import SearchFilterBar from '@/components/SearchFilterBar';
 import PacksSection from '@/components/PacksSection';
 import CategoriesCarousel from '@/components/CategoriesCarousel';
@@ -81,7 +82,7 @@ const Index = () => {
         <section className="px-4 py-8">
           <div className="mb-4">
             <h2 className="text-xl font-bold text-foreground">Produits</h2>
-            <p className="text-xs text-muted-foreground mt-0.5" dir="rtl">المنتجات</p>
+            <p className="text-xs text-muted-foreground mt-0.5 uppercase tracking-wide">Discovery Collection</p>
           </div>
           {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground text-sm py-12">Aucun produit trouvé</p>
@@ -103,6 +104,7 @@ const Index = () => {
         </section>
       </div>
 
+      <Footer />
       <CartFab />
     </div>
   );
