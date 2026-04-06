@@ -4,7 +4,6 @@ import { BarChart3, Package, ShoppingCart, Grid3X3, Truck, LogOut } from 'lucide
 import { supabase } from '@/integrations/supabase/client';
 
 const navItems = [
-  { to: '/admin', icon: BarChart3, label: 'Stats' },
   { to: '/admin/orders', icon: ShoppingCart, label: 'Commandes' },
   { to: '/admin/categories', icon: Grid3X3, label: 'Catégories' },
   { to: '/admin/products', icon: Package, label: 'Produits' },
