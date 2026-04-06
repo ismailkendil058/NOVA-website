@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+import imageCompression from 'browser-image-compression';
+
 export default function AdminCategories() {
   const [categories, setCategories] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
@@ -22,11 +24,21 @@ export default function AdminCategories() {
     if (!form.name_fr || !form.name_ar) return;
     let image_url = '';
     if (form.image) {
-      const ext = form.image.name.split('.').pop();
-      const path = `categories/${Date.now()}.${ext}`;
-      const { error } = await supabase.storage.from('images').upload(path, form.image);
-      if (!error) {
-        image_url = supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
+      try {
+        const options = {
+          maxSizeMB: 0.1, // 100KB
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        };
+        const compressedFile = await imageCompression(form.image, options);
+        const ext = compressedFile.name.split('.').pop();
+        const path = `categories/${Date.now()}.${ext}`;
+        const { error } = await supabase.storage.from('images').upload(path, compressedFile);
+        if (!error) {
+          image_url = supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
+        }
+      } catch (error) {
+        console.error('Compression error:', error);
       }
     }
     await supabase.from('categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });

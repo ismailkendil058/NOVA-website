@@ -16,8 +16,15 @@ export default function ProductCard({ id, name, price, oldPrice, isPack, image }
     <Link to={`/product/${id}`} className="border border-border group">
       <div className="relative aspect-square bg-secondary overflow-hidden">
         {image ? (
-          <img src={image} alt={name} className="w-full h-full object-cover" loading="lazy" />
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover transition-opacity duration-500 opacity-0"
+            loading="lazy"
+            onLoad={(e) => (e.currentTarget.style.opacity = '1')}
+          />
         ) : (
+
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-3xl font-black">
             {name[0]}
           </div>

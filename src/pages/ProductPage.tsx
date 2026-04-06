@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Minus, Plus } from 'lucide-react';
 import { addToCart } from '@/lib/cart';
+
 import { toast } from '@/hooks/use-toast';
 import CartFab from '@/components/CartFab';
 
@@ -23,6 +24,7 @@ export default function ProductPage() {
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
   const [qty, setQty] = useState(1);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -35,6 +37,36 @@ export default function ProductPage() {
       }
     });
   }, [id]);
+
+  useEffect(() => {
+    // Sync scroll position if product changes
+    if (scrollRef.current && product?.images) {
+      scrollRef.current.scrollTo({
+        left: 0,
+        behavior: 'auto'
+      });
+      setCurrentImage(0);
+    }
+  }, [product?.id]);
+
+  const handleThumbnailClick = (index: number) => {
+    setCurrentImage(index);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        left: scrollRef.current.offsetWidth * index,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const index = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth);
+      if (index !== currentImage) {
+        setCurrentImage(index);
+      }
+    }
+  };
 
   if (!product) {
     return (
@@ -65,27 +97,53 @@ export default function ProductPage() {
         <ArrowLeft className="w-5 h-5 text-background" />
       </Link>
 
-      {/* Image carousel */}
-      <div className="relative aspect-square bg-secondary overflow-hidden">
-        {product.images?.length > 0 ? (
-          <img src={product.images[currentImage]} alt={product.name_fr} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-6xl font-black">
-            {product.name_fr[0]}
-          </div>
-        )}
+      {/* Image Gallery */}
+      <div className="relative aspect-square bg-secondary overflow-hidden group">
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory h-full hide-scrollbar no-scrollbar scroll-smooth"
+        >
+          {product.images?.length > 0 ? (
+            product.images.map((img, i) => (
+              <div key={i} className="min-w-full h-full snap-center flex-shrink-0">
+                <img
+                  src={img}
+                  alt={`${product.name_fr} - view ${i + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-6xl font-black">
+              {product.name_fr[0]}
+            </div>
+          )}
+        </div>
+
+        {/* Count Indicator */}
         {product.images?.length > 1 && (
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-            {product.images.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentImage(i)}
-                className={`w-2 h-2 ${i === currentImage ? 'bg-primary' : 'bg-white/50'}`}
-              />
-            ))}
+          <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 text-[10px] font-bold text-white uppercase tracking-widest z-10">
+            {currentImage + 1} / {product.images.length}
           </div>
         )}
       </div>
+
+      {/* Thumbnails below main picture */}
+      {product.images?.length > 1 && (
+        <div className="flex gap-2 px-4 mt-4 overflow-x-auto hide-scrollbar pb-2">
+          {product.images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => handleThumbnailClick(i)}
+              className={`relative flex-shrink-0 aspect-square w-16 overflow-hidden transition-all duration-300 border ${i === currentImage ? 'border-primary scale-110 shadow-lg z-10' : 'border-transparent opacity-60 scale-100 hover:opacity-100'
+                }`}
+            >
+              <img src={img} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="px-4 py-6 space-y-4">
         <div>

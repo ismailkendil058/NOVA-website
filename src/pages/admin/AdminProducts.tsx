@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+import imageCompression from 'browser-image-compression';
+
 interface ProductForm {
   name_fr: string;
   description_fr: string;
@@ -43,12 +45,25 @@ export default function AdminProducts() {
   async function handleSubmit() {
     if (!form.name_fr || !form.price) return;
     const imageUrls: string[] = [];
+
+    const compressionOptions = {
+      maxSizeMB: 0.2, // 200KB
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+
     for (const file of form.images) {
-      const ext = file.name.split('.').pop();
-      const path = `products/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from('images').upload(path, file);
-      if (!error) {
-        imageUrls.push(supabase.storage.from('images').getPublicUrl(path).data.publicUrl);
+      try {
+        const compressedFile = await imageCompression(file, compressionOptions);
+        const ext = compressedFile.name.split('.').pop();
+        const path = `products/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error } = await supabase.storage.from('images').upload(path, compressedFile);
+        if (!error) {
+          imageUrls.push(supabase.storage.from('images').getPublicUrl(path).data.publicUrl);
+        }
+      } catch (error) {
+        console.error('Compression error:', error);
+        // Fallback or handle error
       }
     }
 
