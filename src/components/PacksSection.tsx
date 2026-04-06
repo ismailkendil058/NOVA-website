@@ -43,7 +43,7 @@ export default function PacksSection() {
             <Link
               key={p.id}
               to={`/product/${p.id}`}
-              className="shrink-0 w-48 border border-border/50 group snap-start bg-secondary/30 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg"
+              className="block shrink-0 w-48 border border-border/50 group snap-start bg-secondary/30 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg"
             >
               <div className="relative aspect-square bg-secondary overflow-hidden">
                 {p.images?.[0] && (

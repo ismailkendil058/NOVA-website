@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Minus, Plus } from 'lucide-react';
 import { addToCart } from '@/lib/cart';
@@ -20,6 +20,7 @@ interface Product {
 
 export default function ProductPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
@@ -88,7 +89,7 @@ export default function ProductPage() {
       image: product.images?.[0] || '',
       color: selectedColor,
     }, qty);
-    toast({ title: 'Ajouté au panier', description: `${product.name_fr} × ${qty}` });
+    navigate('/cart');
   };
 
   return (

@@ -78,6 +78,13 @@ export default function CartPage() {
           >
             Valider la commande / تأكيد الطلب
           </Link>
+
+          <Link
+            to="/"
+            className="block w-full bg-secondary text-foreground py-4 text-sm font-bold uppercase tracking-widest text-center hover:bg-zinc-200 transition-colors border border-border"
+          >
+            Continuer les achats / متابعة التسوق
+          </Link>
         </div>
       )}
     </div>
