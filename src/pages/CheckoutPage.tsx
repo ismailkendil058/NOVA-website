@@ -6,6 +6,13 @@ import { useCart } from '@/hooks/useCart';
 import { getCartTotal, clearCart } from '@/lib/cart';
 import { toast } from '@/hooks/use-toast';
 
+const generateOrderId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+};
+
 interface Tarif {
   wilaya_name: string;
   tarif_domicile: number;
@@ -51,7 +58,10 @@ export default function CheckoutPage() {
     }
     setSubmitting(true);
     try {
-      const { data: order, error } = await supabase.from('orders').insert({
+      const orderId = generateOrderId();
+
+      const { error: orderError } = await supabase.from('orders').insert({
+        id: orderId,
         client_name: form.name,
         phone: form.phone,
         wilaya: form.wilaya,
@@ -59,12 +69,12 @@ export default function CheckoutPage() {
         address: form.deliveryType === 'domicile' ? form.address : '',
         total,
         delivery_fee: deliveryFee,
-      }).select().single();
+      });
 
-      if (error) throw error;
+      if (orderError) throw orderError;
 
       const orderItems = items.map(item => ({
-        order_id: (order as any).id,
+        order_id: orderId,
         product_id: item.productId,
         product_name: item.name,
         quantity: item.quantity,
@@ -72,7 +82,9 @@ export default function CheckoutPage() {
         color: item.color || null,
       }));
 
-      await supabase.from('order_items').insert(orderItems);
+      const { error: orderItemsError } = await supabase.from('order_items').insert(orderItems);
+
+      if (orderItemsError) throw orderItemsError;
 
       clearCart();
       toast({ title: 'Commande confirmée!', description: 'Nous vous contacterons bientôt.' });
