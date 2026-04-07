@@ -26,6 +26,7 @@ export default function ProductPage() {
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
   const [qty, setQty] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const prefetchedImages = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (!id) return;
@@ -49,6 +50,26 @@ export default function ProductPage() {
       setCurrentImage(0);
     }
   }, [product?.id]);
+
+  const preloadImage = (url?: string) => {
+    if (!url || typeof window === 'undefined') return;
+    if (prefetchedImages.current.has(url)) return;
+    const img = new Image();
+    img.src = url;
+    prefetchedImages.current.add(url);
+  };
+
+  useEffect(() => {
+    if (!product?.images?.length) return;
+    product.images.slice(0, 3).forEach(preloadImage);
+  }, [product?.images]);
+
+  useEffect(() => {
+    if (!product?.images?.length) return;
+    [currentImage + 1, currentImage + 2].forEach(index => {
+      preloadImage(product.images[index]);
+    });
+  }, [currentImage, product?.images]);
 
   const handleThumbnailClick = (index: number) => {
     setCurrentImage(index);
@@ -112,6 +133,7 @@ export default function ProductPage() {
                   src={img}
                   alt={`${product.name_fr} - view ${i + 1}`}
                   className="w-full h-full object-cover"
+                  loading={i <= currentImage + 1 ? 'eager' : 'lazy'}
                 />
               </div>
             ))

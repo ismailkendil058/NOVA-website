@@ -29,7 +29,7 @@ export default function CategoriesCarousel() {
         </div>
         <p className="text-sm font-medium text-muted-foreground/60" dir="rtl">الفئات المميزة</p>
       </div>
-      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 snap-x snap-mandatory">
+      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 snap-x snap-mandatory scroll-smooth">
         {categories.map(cat => (
           <Link
             key={cat.id}
@@ -51,7 +51,7 @@ export default function CategoriesCarousel() {
                   {cat.name_fr[0]}
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             </div>
             <p className="text-sm font-bold text-foreground text-center line-clamp-1 transition-colors group-hover:text-primary">{cat.name_fr}</p>
             <p className="text-[10px] text-muted-foreground text-center mt-0.5" dir="rtl">{cat.name_ar}</p>
@@ -61,4 +61,3 @@ export default function CategoriesCarousel() {
     </section>
   );
 }
-
