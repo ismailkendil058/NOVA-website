@@ -16,7 +16,7 @@ export default function PacksSection() {
 
   useEffect(() => {
     supabase
-      .from('products')
+      .from('web_products')
       .select('*')
       .or('is_pack.eq.true,old_price.not.is.null')
       .limit(10)
@@ -50,7 +50,7 @@ export default function PacksSection() {
                   <img
                     src={p.images[0]}
                     alt={p.name_fr}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 opacity-0 image-fade-in"
+                    className="w-full h-full object-cover transition-all duration-700 opacity-0 image-fade-in"
                     loading="lazy"
                     decoding="async"
                     onLoad={(e) => (e.currentTarget.style.opacity = '1')}

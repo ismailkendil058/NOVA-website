@@ -27,10 +27,10 @@ export default function CategoryPage() {
 
   useEffect(() => {
     if (!id) return;
-    supabase.from('categories').select('*').eq('id', id).single().then(({ data }) => {
+    supabase.from('web_categories').select('*').eq('id', id).single().then(({ data }) => {
       if (data) setCategory(data as unknown as Category);
     });
-    supabase.from('products').select('*').eq('category_id', id).then(({ data }) => {
+    supabase.from('web_products').select('*').eq('category_id', id).then(({ data }) => {
       if (data) setProducts(data as unknown as Product[]);
     });
   }, [id]);

@@ -17,23 +17,23 @@ export default function AdminOrders() {
 
   useEffect(() => {
     loadOrders();
-    const channel = supabase.channel('orders-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => loadOrders()).subscribe();
+    const channel = supabase.channel('orders-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'web_orders' }, () => loadOrders()).subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
 
   async function loadOrders() {
-    const { data } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    const { data } = await supabase.from('web_orders').select('*').order('created_at', { ascending: false });
     if (data) setOrders(data);
   }
 
   async function openOrder(order: any) {
     setSelectedOrder(order);
-    const { data } = await supabase.from('order_items').select('*').eq('order_id', order.id);
+    const { data } = await supabase.from('web_order_items').select('*').eq('order_id', order.id);
     setOrderItems(data || []);
   }
 
   async function updateStatus(id: string, status: string) {
-    await supabase.from('orders').update({ status }).eq('id', id);
+    await supabase.from('web_orders').update({ status }).eq('id', id);
     loadOrders();
     if (selectedOrder?.id === id) setSelectedOrder({ ...selectedOrder, status });
     toast({ title: 'Statut mis à jour' });
@@ -41,7 +41,7 @@ export default function AdminOrders() {
 
   async function deleteOrder(id: string) {
     if (!confirm('Supprimer cette commande?')) return;
-    await supabase.from('orders').delete().eq('id', id);
+    await supabase.from('web_orders').delete().eq('id', id);
     loadOrders();
     setSelectedOrder(null);
     toast({ title: 'Commande supprimée' });

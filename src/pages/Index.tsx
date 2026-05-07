@@ -42,10 +42,10 @@ const Index = () => {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    supabase.from('products').select('*').then(({ data }) => {
+    supabase.from('web_products').select('*').then(({ data }) => {
       if (data) setProducts(data as unknown as Product[]);
     });
-    supabase.from('categories').select('id, name_fr').then(({ data }) => {
+    supabase.from('web_categories').select('id, name_fr').then(({ data }) => {
       if (data) setCategories(data as unknown as Category[]);
     });
   }, []);

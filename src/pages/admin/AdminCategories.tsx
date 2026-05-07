@@ -17,7 +17,7 @@ export default function AdminCategories() {
   useEffect(() => { load(); }, []);
 
   async function load() {
-    const { data } = await supabase.from('categories').select('*').order('created_at');
+    const { data } = await supabase.from('web_categories').select('*').order('created_at');
     if (data) setCategories(data);
   }
 
@@ -45,7 +45,7 @@ export default function AdminCategories() {
     }
 
     try {
-      await supabase.from('categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });
+      await supabase.from('web_categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });
       setForm({ name_fr: '', name_ar: '', image: null });
       setImagePreview('');
       setOpen(false);
@@ -60,7 +60,7 @@ export default function AdminCategories() {
 
   async function deleteCategory(id: string) {
     if (!confirm('Supprimer cette catégorie?')) return;
-    await supabase.from('categories').delete().eq('id', id);
+    await supabase.from('web_categories').delete().eq('id', id);
     load();
     toast({ title: 'Catégorie supprimée' });
   }

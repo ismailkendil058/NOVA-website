@@ -37,8 +37,8 @@ export default function AdminProducts() {
 
   async function load() {
     const [{ data: p }, { data: c }] = await Promise.all([
-      supabase.from('products').select('*').order('created_at', { ascending: false }),
-      supabase.from('categories').select('id, name_fr'),
+      supabase.from('web_products').select('*').order('created_at', { ascending: false }),
+      supabase.from('web_categories').select('id, name_fr'),
     ]);
     if (p) setProducts(p);
     if (c) setCategories(c);
@@ -89,10 +89,10 @@ export default function AdminProducts() {
 
     try {
       if (editingId) {
-        await supabase.from('products').update(record).eq('id', editingId);
+        await supabase.from('web_products').update(record).eq('id', editingId);
         toast({ title: 'Produit modifié' });
       } else {
-        await supabase.from('products').insert(record);
+        await supabase.from('web_products').insert(record);
         toast({ title: 'Produit ajouté' });
       }
 
@@ -127,7 +127,7 @@ export default function AdminProducts() {
 
   async function deleteProduct(id: string) {
     if (!confirm('Supprimer ce produit?')) return;
-    await supabase.from('products').delete().eq('id', id);
+    await supabase.from('web_products').delete().eq('id', id);
     load();
     toast({ title: 'Produit supprimé' });
   }
@@ -235,7 +235,7 @@ export default function AdminProducts() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className={`w-full bg-primary text-primary-foreground py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-full bg-primary text-primary-foreground py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 active:scale-[0.99] transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {loading ? `Enregistrement... ${uploadProgress > 0 ? `${uploadProgress}%` : ''}` : (editingId ? 'Valider les modifications' : 'Enregistrer le produit')}
               </button>
@@ -251,7 +251,7 @@ export default function AdminProducts() {
       <div className="space-y-6">
         <div className="flex justify-between items-center bg-white p-4 border border-border shadow-sm">
           <h2 className="text-sm font-black uppercase tracking-widest text-foreground">Gestion Stock Produits</h2>
-          <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+          <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 transition-all">
             <Plus className="w-4 h-4" /> Nouveau Produit
           </button>
         </div>

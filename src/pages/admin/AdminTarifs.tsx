@@ -11,7 +11,7 @@ export default function AdminTarifs() {
   useEffect(() => { load(); }, []);
 
   async function load() {
-    const { data } = await supabase.from('delivery_tarifs').select('*').order('wilaya_number');
+    const { data } = await supabase.from('web_delivery_tarifs').select('*').order('wilaya_number');
     if (data) setTarifs(data);
   }
 
@@ -31,7 +31,7 @@ export default function AdminTarifs() {
   async function saveAll() {
     const updates = Object.entries(edited);
     for (const [id, vals] of updates) {
-      await supabase.from('delivery_tarifs').update({
+      await supabase.from('web_delivery_tarifs').update({
         tarif_domicile: parseFloat(vals.domicile),
         tarif_bureau: parseFloat(vals.bureau),
       }).eq('id', id);
@@ -47,7 +47,7 @@ export default function AdminTarifs() {
         <div className="flex justify-between items-center bg-white p-3 border border-border shadow-sm">
           <h2 className="text-sm font-black uppercase tracking-widest text-foreground">Tarifs de livraison</h2>
           {Object.keys(edited).length > 0 && (
-            <button onClick={saveAll} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+            <button onClick={saveAll} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 transition-all">
               <Save className="w-3.5 h-3.5" /> Sauvegarder les modifications
             </button>
           )}

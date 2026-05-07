@@ -13,7 +13,7 @@ export default function CategoriesCarousel() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    supabase.from('categories').select('*').then(({ data }) => {
+    supabase.from('web_categories').select('*').then(({ data }) => {
       if (data) setCategories(data as unknown as Category[]);
     });
   }, []);
@@ -41,7 +41,7 @@ export default function CategoriesCarousel() {
                 <img
                   src={cat.image_url}
                   alt={cat.name_fr}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-0 image-fade-in"
+                  className="w-full h-full object-cover transition-transform duration-700 opacity-0 image-fade-in"
                   loading="lazy"
                   decoding="async"
                   onLoad={(e) => (e.currentTarget.style.opacity = '1')}

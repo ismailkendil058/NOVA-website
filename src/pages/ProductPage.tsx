@@ -30,7 +30,7 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!id) return;
-    supabase.from('products').select('*').eq('id', id).single().then(({ data }) => {
+    supabase.from('web_products').select('*').eq('id', id).single().then(({ data }) => {
       if (data) {
         const p = data as unknown as Product;
         p.colors = Array.isArray(p.colors) ? p.colors : [];
@@ -159,7 +159,7 @@ export default function ProductPage() {
             <button
               key={i}
               onClick={() => handleThumbnailClick(i)}
-              className={`relative flex-shrink-0 aspect-square w-16 overflow-hidden transition-all duration-300 border ${i === currentImage ? 'border-primary scale-110 shadow-lg z-10' : 'border-transparent opacity-60 scale-100 hover:opacity-100'
+              className={`relative flex-shrink-0 aspect-square w-16 overflow-hidden transition-all duration-300 border ${i === currentImage ? 'border-primary shadow-lg z-10' : 'border-transparent opacity-60 hover:opacity-100'
                 }`}
             >
               <img src={img} className="w-full h-full object-cover" />

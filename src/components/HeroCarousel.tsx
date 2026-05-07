@@ -32,15 +32,15 @@ export default function HeroCarousel() {
           className="absolute inset-0 will-change-opacity"
         >
           <motion.div
-            initial={{ scale: 1.1 }}
+            initial={{ scale: 1 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 8, ease: "linear" }}
+            transition={{ duration: 0 }}
             className="w-full h-full relative"
           >
             <img
               src={slides[current].img}
               alt="Nova Deco Hero"
-              className="w-full h-full object-cover block will-change-transform"
+              className="w-full h-full object-cover block"
               loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
@@ -68,7 +68,7 @@ export default function HeroCarousel() {
 
           <a
             href="#content"
-            className="inline-block bg-white text-black px-12 py-4 text-sm font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300 pointer-events-auto shadow-2xl transform hover:scale-105 active:scale-95"
+            className="inline-block bg-white text-black px-12 py-4 text-sm font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300 pointer-events-auto shadow-2xl transform active:scale-95"
           >
             Découvrir
           </a>

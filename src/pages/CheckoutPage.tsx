@@ -33,7 +33,7 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    supabase.from('delivery_tarifs').select('wilaya_name, tarif_domicile, tarif_bureau')
+    supabase.from('web_delivery_tarifs').select('wilaya_name, tarif_domicile, tarif_bureau')
       .order('wilaya_name')
       .then(({ data }) => {
         if (data) setTarifs(data as Tarif[]);
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
     try {
       const orderId = generateOrderId();
 
-      const { error: orderError } = await supabase.from('orders').insert({
+      const { error: orderError } = await supabase.from('web_orders').insert({
         id: orderId,
         client_name: form.name,
         phone: form.phone,
@@ -82,7 +82,7 @@ export default function CheckoutPage() {
         color: item.color || null,
       }));
 
-      const { error: orderItemsError } = await supabase.from('order_items').insert(orderItems);
+      const { error: orderItemsError } = await supabase.from('web_order_items').insert(orderItems);
 
       if (orderItemsError) throw orderItemsError;
 
