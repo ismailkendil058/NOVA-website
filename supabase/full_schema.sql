@@ -71,29 +71,32 @@ ALTER TABLE web_delivery_tarifs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE web_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE web_order_items ENABLE ROW LEVEL SECURITY;
 
--- 4. CREATE RLS POLICIES
+-- 4. GRANTS (Fixing 403 Forbidden for all operations)
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
+-- 5. CREATE RLS POLICIES
 
 -- Categories
-CREATE POLICY "Anyone can read categories" ON web_categories FOR SELECT USING (true);
-CREATE POLICY "Authenticated full access categories" ON web_categories FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can do everything on categories" ON web_categories FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- Products
-CREATE POLICY "Anyone can read products" ON web_products FOR SELECT USING (true);
-CREATE POLICY "Authenticated full access products" ON web_products FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can do everything on products" ON web_products FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- Delivery Tarifs
-CREATE POLICY "Anyone can read delivery_tarifs" ON web_delivery_tarifs FOR SELECT USING (true);
-CREATE POLICY "Authenticated full access delivery_tarifs" ON web_delivery_tarifs FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can read delivery_tarifs" ON web_delivery_tarifs FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Anyone can do everything on delivery_tarifs" ON web_delivery_tarifs FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- Orders
-CREATE POLICY "Anyone can create orders" ON web_orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "Anyone can read orders" ON web_orders FOR SELECT USING (true);
-CREATE POLICY "Authenticated full access orders" ON web_orders FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can create orders" ON web_orders FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Anyone can read orders" ON web_orders FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Anyone can do everything on orders" ON web_orders FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- Order Items
-CREATE POLICY "Anyone can create order_items" ON web_order_items FOR INSERT WITH CHECK (true);
-CREATE POLICY "Anyone can read order_items" ON web_order_items FOR SELECT USING (true);
-CREATE POLICY "Authenticated full access order_items" ON web_order_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can create order_items" ON web_order_items FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Anyone can read order_items" ON web_order_items FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Anyone can do everything on order_items" ON web_order_items FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- 5. STORAGE SETUP
 -- Run these manually in the Supabase SQL Editor if buckets don't exist

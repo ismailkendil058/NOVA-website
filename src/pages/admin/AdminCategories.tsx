@@ -10,6 +10,7 @@ import imageCompression from 'browser-image-compression';
 export default function AdminCategories() {
   const [categories, setCategories] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ name_fr: '', name_ar: '', image: null as File | null });
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,12 @@ export default function AdminCategories() {
     if (!form.name_fr || !form.name_ar) return;
     setLoading(true);
     let image_url = '';
+    
+    // If we're editing and have no new image, we keep the old one (this logic is simplified here)
+    // To be more robust, we should keep the existing image_url if no new image is provided
+    const existingCategory = editingId ? categories.find(c => c.id === editingId) : null;
+    image_url = existingCategory?.image_url || '';
+
     if (form.image) {
       try {
         const options = {
@@ -45,17 +52,31 @@ export default function AdminCategories() {
     }
 
     try {
-      await supabase.from('web_categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });
+      if (editingId) {
+        await supabase.from('web_categories').update({ name_fr: form.name_fr, name_ar: form.name_ar, image_url }).eq('id', editingId);
+        toast({ title: 'Catégorie modifiée' });
+      } else {
+        await supabase.from('web_categories').insert({ name_fr: form.name_fr, name_ar: form.name_ar, image_url });
+        toast({ title: 'Catégorie ajoutée' });
+      }
+      
       setForm({ name_fr: '', name_ar: '', image: null });
       setImagePreview('');
+      setEditingId(null);
       setOpen(false);
       load();
-      toast({ title: 'Catégorie ajoutée' });
     } catch (error) {
       toast({ title: 'Erreur', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
+  }
+
+  function editCategory(cat: any) {
+    setEditingId(cat.id);
+    setForm({ name_fr: cat.name_fr, name_ar: cat.name_ar, image: null });
+    setImagePreview(cat.image_url || '');
+    setOpen(true);
   }
 
   async function deleteCategory(id: string) {
@@ -75,15 +96,20 @@ export default function AdminCategories() {
       <div className="space-y-4">
         <div className="flex justify-between items-center bg-white p-3 border border-border shadow-sm">
           <h2 className="text-sm font-black uppercase tracking-widest text-foreground">Catégories</h2>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if(!v) { setEditingId(null); setForm({ name_fr: '', name_ar: '', image: null }); setImagePreview(''); } }}>
             <DialogTrigger asChild>
-              <button className="flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1.5 text-xs font-bold">
+              <button 
+                onClick={() => { setEditingId(null); setForm({ name_fr: '', name_ar: '', image: null }); setImagePreview(''); }}
+                className="flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1.5 text-xs font-bold"
+              >
                 <Plus className="w-3 h-3" /> Ajouter
               </button>
             </DialogTrigger>
             <DialogContent className="bg-white border-border text-foreground max-w-sm">
               <DialogHeader>
-                <DialogTitle className="text-foreground font-black uppercase">Nouvelle catégorie</DialogTitle>
+                <DialogTitle className="text-foreground font-black uppercase">
+                  {editingId ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-3 mt-4">
                 <div className="space-y-1">
@@ -104,7 +130,7 @@ export default function AdminCategories() {
                   disabled={loading}
                   className={`w-full bg-primary text-primary-foreground py-3 text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/20 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  {loading ? 'Enregistrement...' : 'Enregistrer'}
+                  {loading ? 'Enregistrement...' : (editingId ? 'Mettre à jour' : 'Enregistrer')}
                 </button>
               </div>
             </DialogContent>
@@ -129,7 +155,8 @@ export default function AdminCategories() {
                   </td>
                   <td className="py-2 px-3 text-foreground font-medium">{c.name_fr}</td>
                   <td className="py-2 px-3 text-muted-foreground font-medium" dir="rtl">{c.name_ar}</td>
-                  <td className="py-2 px-3 text-right">
+                  <td className="py-2 px-3 text-right space-x-2">
+                    <button onClick={() => editCategory(c)} className="bg-secondary text-foreground font-bold px-3 py-1.5 text-[10px] uppercase border border-border hover:bg-zinc-100 transition-all">Modifier</button>
                     <button onClick={() => deleteCategory(c.id)} className="text-destructive p-2 hover:bg-destructive/10 rounded transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                   </td>
                 </tr>
